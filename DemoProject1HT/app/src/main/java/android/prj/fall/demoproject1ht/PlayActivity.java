@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity {
     ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3;
-    TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3;
+    TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3, tvScore;
     MediaPlayer mp;
     String[] arrData = {"apple", "bridge", "bread", "exhausted", "spoon", "refrigerator", "pillow",
             "oven", "chopsticks", "passport", "luggage", "bride", "groom", "teddy",
@@ -36,6 +36,7 @@ public class PlayActivity extends AppCompatActivity {
     int count = 0;
     int countPlay = 0;
     int countClickRightAnswer;
+    int score = 0;
     Random r = new Random();
     Animation animClick, animRotate, animZoomText, animZoomLoad;
 
@@ -49,6 +50,7 @@ public class PlayActivity extends AppCompatActivity {
         ivAnswer2 = (ImageView) findViewById(R.id.imageViewAnswer2);
         ivAnswer3 = (ImageView) findViewById(R.id.imageViewAnswer3);
         tvCount = (TextView)findViewById(R.id.textViewCount);
+        tvScore = (TextView)findViewById(R.id.textViewScore);
         tvAnswer1 = (TextView)findViewById(R.id.textViewAnswer1);
         tvAnswer2 = (TextView)findViewById(R.id.textViewAnswer2);
         tvAnswer3 = (TextView)findViewById(R.id.textViewAnswer3);
@@ -176,12 +178,14 @@ public class PlayActivity extends AppCompatActivity {
                     if(countClickRightAnswer==0){
                         run++;
                         count++;
+                        tvScore.setText(Integer.toString(++score));
                     }
                     play();
                     countClickRightAnswer++;
                 }else{
                     ivAnswer1.startAnimation(animRotate);
                     alertSound(0);
+                    tvScore.setText(Integer.toString(--score));
                 }
                 break;
             case R.id.imageViewAnswer2:
@@ -200,12 +204,14 @@ public class PlayActivity extends AppCompatActivity {
                     if(countClickRightAnswer==0){
                         count++;
                         run++;
+                        tvScore.setText(Integer.toString(++score));
                     }
                     play();
                     countClickRightAnswer++;
                 }else{
                     ivAnswer2.startAnimation(animRotate);
                     alertSound(0);
+                    tvScore.setText(Integer.toString(--score));
                 }
                 break;
             case R.id.imageViewAnswer3:
@@ -224,12 +230,14 @@ public class PlayActivity extends AppCompatActivity {
                     if(countClickRightAnswer==0){
                         count++;
                         run++;
+                        tvScore.setText(Integer.toString(++score));
                     }
                     play();
                     countClickRightAnswer++;
                 }else{
                     ivAnswer3.startAnimation(animRotate);
                     alertSound(0);
+                    tvScore.setText(Integer.toString(--score));
                 }
                 break;
         }
