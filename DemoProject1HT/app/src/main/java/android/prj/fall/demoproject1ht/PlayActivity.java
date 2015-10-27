@@ -27,7 +27,9 @@ public class PlayActivity extends AppCompatActivity {
             "oven", "chopsticks", "passport", "luggage", "bride", "groom", "teddy",
             "motorcycle", "boat", "plane", "sheep", "crocodile", "eggs", "yogurt", "banana",
             "coconut", "grape", "mango", "honey", "pepper", "chocolate", "continent", "skyscraper",
-            "tongue", "massage", "pool", "thief", "wheel","escalator","stair"};
+            "tongue", "massage", "pool", "thief", "wheel","escalator","stair","fortune_teller",
+            "zodiac","vampire","ghost", "nail_clipper","razor","toothpaste", "great_wall",
+            "eiffel_tower","pyramid","shampoo","skydive","temple"};
     List<String> listData = new ArrayList<>();
     int ident_1, ident_2, ident_3, ident_a = 0;
     String answer, audio;
