@@ -39,6 +39,7 @@ public class PlayActivity extends AppCompatActivity {
     int score = 0;
     Random r = new Random();
     Animation animClick, animRotate, animZoomText, animZoomLoad;
+    // temporary test GitHub
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
