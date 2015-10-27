@@ -1,7 +1,6 @@
 package android.prj.fall.demoproject1ht;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity {
     ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3;
-    TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3, tvScore;
+    TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3, tvScore, tvCountRight;
     MediaPlayer mp;
     String[] arrData = {"apple", "bridge", "bread", "exhausted", "spoon", "refrigerator", "pillow",
             "oven", "chopsticks", "passport", "luggage", "bride", "groom", "teddy",
@@ -37,9 +37,10 @@ public class PlayActivity extends AppCompatActivity {
     int countPlay = 0;
     int countClickRightAnswer;
     int score = 0;
+    int countRight = 0;
+    boolean right = true; // Trigger count right answer "only recognize in the first time"
     Random r = new Random();
     Animation animClick, animRotate, animZoomText, animZoomLoad;
-    // temporary test GitHub
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class PlayActivity extends AppCompatActivity {
         ivAnswer3 = (ImageView) findViewById(R.id.imageViewAnswer3);
         tvCount = (TextView)findViewById(R.id.textViewCount);
         tvScore = (TextView)findViewById(R.id.textViewScore);
+        tvCountRight = (TextView)findViewById(R.id.textViewCountRight);
         tvAnswer1 = (TextView)findViewById(R.id.textViewAnswer1);
         tvAnswer2 = (TextView)findViewById(R.id.textViewAnswer2);
         tvAnswer3 = (TextView)findViewById(R.id.textViewAnswer3);
@@ -78,6 +80,7 @@ public class PlayActivity extends AppCompatActivity {
                         clearText();
                         mp.start();
                         showImages();
+                        right = true;
                     }else{
                         mp.start();
                     }
@@ -180,6 +183,10 @@ public class PlayActivity extends AppCompatActivity {
                         run++;
                         count++;
                         tvScore.setText(Integer.toString(++score));
+                        if(right==true){
+                            tvCountRight.setText(Integer.toString(++countRight));
+                            right = false;
+                        }
                     }
                     play();
                     countClickRightAnswer++;
@@ -187,6 +194,7 @@ public class PlayActivity extends AppCompatActivity {
                     ivAnswer1.startAnimation(animRotate);
                     alertSound(0);
                     tvScore.setText(Integer.toString(--score));
+                    right = false;
                 }
                 break;
             case R.id.imageViewAnswer2:
@@ -206,6 +214,10 @@ public class PlayActivity extends AppCompatActivity {
                         count++;
                         run++;
                         tvScore.setText(Integer.toString(++score));
+                        if(right==true){
+                            tvCountRight.setText(Integer.toString(++countRight));
+                            right = false;
+                        }
                     }
                     play();
                     countClickRightAnswer++;
@@ -213,6 +225,7 @@ public class PlayActivity extends AppCompatActivity {
                     ivAnswer2.startAnimation(animRotate);
                     alertSound(0);
                     tvScore.setText(Integer.toString(--score));
+                    right = false;
                 }
                 break;
             case R.id.imageViewAnswer3:
@@ -232,6 +245,10 @@ public class PlayActivity extends AppCompatActivity {
                         count++;
                         run++;
                         tvScore.setText(Integer.toString(++score));
+                        if(right==true){
+                            tvCountRight.setText(Integer.toString(++countRight));
+                            right = false;
+                        }
                     }
                     play();
                     countClickRightAnswer++;
@@ -239,6 +256,7 @@ public class PlayActivity extends AppCompatActivity {
                     ivAnswer3.startAnimation(animRotate);
                     alertSound(0);
                     tvScore.setText(Integer.toString(--score));
+                    right = false;
                 }
                 break;
         }
@@ -290,23 +308,29 @@ public class PlayActivity extends AppCompatActivity {
 
     public void alertCompleteGame(){
         alertSound(2);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Complete Level");
-        builder.setMessage("Congratulation! You have finished the lesson");
-        builder.setNegativeButton("Go to Main", new DialogInterface.OnClickListener() {
+        Dialog dialog = new Dialog(this);
+        dialog.setTitle("Complete Level");
+        dialog.setContentView(R.layout.dialog_complete_game);
+        TextView scoreRef = (TextView)dialog.findViewById(R.id.tv_cus_Score);
+        TextView countRightRef = (TextView)dialog.findViewById(R.id.tv_cus_CountRight);
+        Button btnGoMainRef = (Button)dialog.findViewById(R.id.btn_cus_Main);
+        Button btnReplayRef = (Button)dialog.findViewById(R.id.btn_cus_Replay);
+
+        scoreRef.setText(Integer.toString(score));
+        countRightRef.setText(Integer.toString(countRight));
+        btnGoMainRef.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 startActivity(new Intent(PlayActivity.this, MainActivity.class));
             }
         });
-        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+        btnReplayRef.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(PlayActivity.this,PlayActivity.class));
+            public void onClick(View v) {
+                startActivity(new Intent(PlayActivity.this, PlayActivity.class));
             }
         });
-        builder.create();
-        builder.show();
+        dialog.show();
     }
 
 
