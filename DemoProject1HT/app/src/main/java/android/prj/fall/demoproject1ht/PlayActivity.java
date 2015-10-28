@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -170,97 +172,112 @@ public class PlayActivity extends AppCompatActivity {
     public void checkAnswer(View view){
         switch (view.getId()){
             case R.id.imageViewAnswer1:
-                // Get entry name image_1 & audio
-                answer = getResources().getResourceEntryName(ident_1);
-                audio = getResources().getResourceEntryName(ident_a);
-                // Comparison
-                if (answer.equalsIgnoreCase(audio)){
-                    ivAnswer1.startAnimation(animClick);
-                    alertSound(1);
-                    tvAnswer1.setText(answer);
-                    tvAnswer1.startAnimation(animZoomText);
+                if(ident_a==0){
+                    showToast();
+                    break;
+                } else{
+                    // Get entry name image_1 & audio
+                    answer = getResources().getResourceEntryName(ident_1);
+                    audio = getResources().getResourceEntryName(ident_a);
+                    // Comparison
+                    if (answer.equalsIgnoreCase(audio)){
+                        ivAnswer1.startAnimation(animClick);
+                        alertSound(1);
+                        tvAnswer1.setText(answer);
+                        tvAnswer1.startAnimation(animZoomText);
 
-                    countPlay=0;
-                    if(countClickRightAnswer==0){
-                        run++;
-                        count++;
-                        tvScore.setText(Integer.toString(++score));
-                        if(right==true){
-                            tvCountRight.setText(Integer.toString(++countRight));
-                            right = false;
+                        countPlay=0;
+                        if(countClickRightAnswer==0){
+                            run++;
+                            count++;
+                            tvScore.setText(Integer.toString(++score));
+                            if(right==true){
+                                tvCountRight.setText(Integer.toString(++countRight));
+                                right = false;
+                            }
                         }
+                        play();
+                        countClickRightAnswer++;
+                    }else{
+                        ivAnswer1.startAnimation(animRotate);
+                        alertSound(0);
+                        tvScore.setText(Integer.toString(--score));
+                        right = false;
                     }
-                    play();
-                    countClickRightAnswer++;
-                }else{
-                    ivAnswer1.startAnimation(animRotate);
-                    alertSound(0);
-                    tvScore.setText(Integer.toString(--score));
-                    right = false;
+                    break;
                 }
-                break;
             case R.id.imageViewAnswer2:
-                ivAnswer2.startAnimation(animClick);
-                // Get entry name image_2 & audio
-                answer = getResources().getResourceEntryName(ident_2);
-                audio = getResources().getResourceEntryName(ident_a);
-                // Comparison
-                if (answer.equalsIgnoreCase(audio)){
+                if(ident_a==0){
+                    showToast();
+                    break;
+                } else{
                     ivAnswer2.startAnimation(animClick);
-                    alertSound(1);
-                    tvAnswer2.setText(answer);
-                    tvAnswer2.startAnimation(animZoomText);
+                    // Get entry name image_2 & audio
+                    answer = getResources().getResourceEntryName(ident_2);
+                    audio = getResources().getResourceEntryName(ident_a);
+                    // Comparison
+                    if (answer.equalsIgnoreCase(audio)){
+                        ivAnswer2.startAnimation(animClick);
+                        alertSound(1);
+                        tvAnswer2.setText(answer);
+                        tvAnswer2.startAnimation(animZoomText);
 
-                    countPlay=0;
-                    if(countClickRightAnswer==0){
-                        count++;
-                        run++;
-                        tvScore.setText(Integer.toString(++score));
-                        if(right==true){
-                            tvCountRight.setText(Integer.toString(++countRight));
-                            right = false;
+                        countPlay=0;
+                        if(countClickRightAnswer==0){
+                            count++;
+                            run++;
+                            tvScore.setText(Integer.toString(++score));
+                            if(right==true){
+                                tvCountRight.setText(Integer.toString(++countRight));
+                                right = false;
+                            }
                         }
+                        play();
+                        countClickRightAnswer++;
+                    }else{
+                        ivAnswer2.startAnimation(animRotate);
+                        alertSound(0);
+                        tvScore.setText(Integer.toString(--score));
+                        right = false;
                     }
-                    play();
-                    countClickRightAnswer++;
-                }else{
-                    ivAnswer2.startAnimation(animRotate);
-                    alertSound(0);
-                    tvScore.setText(Integer.toString(--score));
-                    right = false;
+                    break;
                 }
-                break;
             case R.id.imageViewAnswer3:
-                ivAnswer3.startAnimation(animClick);
-                // Get entry name image_3 & audio
-                answer = getResources().getResourceEntryName(ident_3);
-                audio = getResources().getResourceEntryName(ident_a);
-                // Comparison
-                if (answer.equalsIgnoreCase(audio)){
+                if(ident_a==0){
+                    showToast();
+                    break;
+                } else{
                     ivAnswer3.startAnimation(animClick);
-                    alertSound(1);
-                    tvAnswer3.setText(answer);
-                    tvAnswer3.startAnimation(animZoomText);
+                    // Get entry name image_3 & audio
+                    answer = getResources().getResourceEntryName(ident_3);
+                    audio = getResources().getResourceEntryName(ident_a);
+                    // Comparison
+                    if (answer.equalsIgnoreCase(audio)){
+                        ivAnswer3.startAnimation(animClick);
+                        alertSound(1);
+                        tvAnswer3.setText(answer);
+                        tvAnswer3.startAnimation(animZoomText);
 
-                    countPlay=0;
-                    if(countClickRightAnswer==0){
-                        count++;
-                        run++;
-                        tvScore.setText(Integer.toString(++score));
-                        if(right==true){
-                            tvCountRight.setText(Integer.toString(++countRight));
-                            right = false;
+                        countPlay=0;
+                        if(countClickRightAnswer==0){
+                            count++;
+                            run++;
+                            tvScore.setText(Integer.toString(++score));
+                            if(right==true){
+                                tvCountRight.setText(Integer.toString(++countRight));
+                                right = false;
+                            }
                         }
+                        play();
+                        countClickRightAnswer++;
+                    }else{
+                        ivAnswer3.startAnimation(animRotate);
+                        alertSound(0);
+                        tvScore.setText(Integer.toString(--score));
+                        right = false;
                     }
-                    play();
-                    countClickRightAnswer++;
-                }else{
-                    ivAnswer3.startAnimation(animRotate);
-                    alertSound(0);
-                    tvScore.setText(Integer.toString(--score));
-                    right = false;
+                    break;
                 }
-                break;
         }
     }
 
@@ -312,7 +329,7 @@ public class PlayActivity extends AppCompatActivity {
         alertSound(2);
         Dialog dialog = new Dialog(this);
         dialog.setTitle("Complete Level");
-        dialog.setContentView(R.layout.dialog_complete_game);
+        dialog.setContentView(R.layout.custom_dialog_complete_game);
         TextView scoreRef = (TextView)dialog.findViewById(R.id.tv_cus_Score);
         TextView countRightRef = (TextView)dialog.findViewById(R.id.tv_cus_CountRight);
         Button btnGoMainRef = (Button)dialog.findViewById(R.id.btn_cus_Main);
@@ -333,6 +350,16 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    public void showToast(){
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast,(ViewGroup)findViewById(R.id.layout_cus_toast));
+        Toast toast = new Toast(this);
+        toast.setView(layout);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        TextView msg = (TextView)layout.findViewById(R.id.tv_cus_toast);
+        msg.setText("Please tap the headphone icon to hear the audio !");
+        toast.show();
     }
 
 
