@@ -1,7 +1,10 @@
 package android.prj.fall.demoproject1ht;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +26,10 @@ import java.util.List;
 import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity {
-    ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3;
+    ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3, ivStop, ivVolume;
     TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3, tvScore, tvCountRight;
+    SeekBar seekBarVolume;
+    AudioManager audioManager;
     MediaPlayer mp;
     String[] arrData = {"apple", "bridge", "bread", "exhausted", "spoon", "refrigerator", "pillow",
             "oven", "chopsticks", "passport", "luggage", "bride", "groom", "teddy",
@@ -55,6 +61,9 @@ public class PlayActivity extends AppCompatActivity {
         ivAnswer1 = (ImageView) findViewById(R.id.imageViewAnswer1);
         ivAnswer2 = (ImageView) findViewById(R.id.imageViewAnswer2);
         ivAnswer3 = (ImageView) findViewById(R.id.imageViewAnswer3);
+        ivStop = (ImageView) findViewById(R.id.imageViewStop);
+        ivVolume = (ImageView) findViewById(R.id.imageViewVolumeControl);
+        seekBarVolume = (SeekBar)findViewById(R.id.seekBarVolumeControl);
         tvCount = (TextView)findViewById(R.id.textViewCount);
         tvScore = (TextView)findViewById(R.id.textViewScore);
         tvCountRight = (TextView)findViewById(R.id.textViewCountRight);
@@ -62,13 +71,21 @@ public class PlayActivity extends AppCompatActivity {
         tvAnswer2 = (TextView)findViewById(R.id.textViewAnswer2);
         tvAnswer3 = (TextView)findViewById(R.id.textViewAnswer3);
 
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+
         animClick = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.click);
         animRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
         animZoomText = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_text);
         animZoomLoad = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_load);
 
+        seekBarVolume.setVisibility(View.INVISIBLE);
+
         shuffleData();
         play();
+        stopGame();
+        controlVolume();
+        toggleVolumeControl();
     }
 
 
@@ -360,6 +377,59 @@ public class PlayActivity extends AppCompatActivity {
         TextView msg = (TextView)layout.findViewById(R.id.tv_cus_toast);
         msg.setText("Please tap the headphone icon to hear the audio !");
         toast.show();
+    }
+
+    public void stopGame(){
+        ivStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this);
+                builder.setTitle("Quit the lession");
+                builder.setMessage("Are you sure exit this lession !");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(PlayActivity.this, MainActivity.class));
+                    }
+                });
+                builder.setNegativeButton("No", null);
+                builder.show();
+            }
+        });
+    }
+
+    public void controlVolume(){
+        seekBarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        seekBarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+        seekBarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    public void toggleVolumeControl(){
+        ivVolume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(seekBarVolume.isShown()){
+                    seekBarVolume.setVisibility(View.INVISIBLE);
+                }else{
+                    seekBarVolume.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
