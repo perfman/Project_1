@@ -2,6 +2,7 @@ package android.prj.fall.demoproject1ht;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnPlay = (Button)findViewById(R.id.buttonPlay);
-        btnLoad = (Button)findViewById(R.id.buttonLoad);
+        btnPlay = (Button) findViewById(R.id.buttonPlay);
+        btnLoad = (Button) findViewById(R.id.buttonLoad);
 
         animClick = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.click);
 
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         loadGame();
     }
 
-    public void playGame(){
+    public void playGame() {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void playSoundClick(){
-        mpClick = MediaPlayer.create(this,R.raw.sys_click);
+    public void playSoundClick() {
+        mpClick = MediaPlayer.create(this, R.raw.sys_click);
         mpClick.start();
         mpClick.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void loadGame(){
+    public void loadGame() {
         btnLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,9 +62,13 @@ public class MainActivity extends AppCompatActivity {
                 final Dialog dialog = new Dialog(MainActivity.this);
                 dialog.setTitle("Load Game");
                 dialog.setContentView(R.layout.custom_dialog_load_game);
-                TextView info = (TextView)dialog.findViewById(R.id.tv_cus_InfoSavedGame);
-                Button btnCancel = (Button)dialog.findViewById(R.id.btn_cus_CancelLoadGame);
-                Button btnOK = (Button)dialog.findViewById(R.id.btn_cus_OKLoadGame);
+                TextView time = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Time);
+                TextView position = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Position);
+                time.setText(getInfoSaveGame("time"));
+                position.setText(getInfoSaveGame("position"));
+
+                Button btnCancel = (Button) dialog.findViewById(R.id.btn_cus_CancelLoadGame);
+                Button btnOK = (Button) dialog.findViewById(R.id.btn_cus_OKLoadGame);
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -80,5 +85,19 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
+
+    public String getInfoSaveGame(String type) {
+        SharedPreferences share = getSharedPreferences("save_game", MODE_PRIVATE);
+        if (type.equals("time")) {
+            String time = share.getString("time", "");
+            return time;
+        } else if (type.equals("position")) {
+            int count = share.getInt("count", 0);
+            int size = share.getInt("size", 0);
+            return Integer.toString(count + 1) + "/" + Integer.toString(size);
+
+        }
+        return "";
     }
 }

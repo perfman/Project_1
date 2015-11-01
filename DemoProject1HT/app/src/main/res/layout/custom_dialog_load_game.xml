@@ -10,12 +10,42 @@
         android:text="Are you sure load game in the latest save ? "
         android:layout_marginBottom="8dp"
         android:textStyle="bold"/>
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Detail info of game will show here"
-        android:id="@+id/tv_cus_InfoSavedGame"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sys_ic_clock_24"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="50dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detail info of game will show here"
+            android:id="@+id/tv_cus_InfoSavedGame_Time"
+            android:layout_marginBottom="8dp"
+            android:textColor="#1818a2" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sys_ic_pin_24"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="50dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detail info of game will show here"
+            android:id="@+id/tv_cus_InfoSavedGame_Position"
+            android:layout_marginBottom="8dp"
+            android:textColor="#1818a2" />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

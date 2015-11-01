@@ -26,8 +26,10 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -466,6 +468,11 @@ public class PlayActivity extends AppCompatActivity {
                         editor.putInt("count", run);
                         editor.putInt("score", score);
                         editor.putInt("countRight", countRight);
+                        editor.putInt("size",listData.size());
+                        // save current time
+                        SimpleDateFormat format = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+                        String currentTime = format.format(new Date());
+                        editor.putString("time",currentTime);
                         if (editor.commit()) {
                             showToast("Game save successful !");
                         } else {
