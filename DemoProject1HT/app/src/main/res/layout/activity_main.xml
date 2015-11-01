@@ -30,8 +30,16 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/sys_border"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"/>
-
+            android:layout_marginTop="20dp"/>
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonLoad"
+            android:text="Load"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/sys_border"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
         <Button
             android:layout_width="120dp"
             android:layout_height="wrap_content"
@@ -39,8 +47,7 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/sys_border"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"/>
-
+            android:layout_marginTop="10dp"/>
         <Button
             android:layout_width="120dp"
             android:layout_height="wrap_content"
@@ -48,7 +55,7 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/sys_border"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="10dp"/>
     </LinearLayout>
 
 </LinearLayout>

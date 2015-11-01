@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -14,19 +15,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class PlayActivity extends AppCompatActivity {
-    ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3, ivStop, ivVolume;
+    ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3, ivStop, ivPause, ivVolume;
     TextView tvCount, tvAnswer1, tvAnswer2, tvAnswer3, tvScore, tvCountRight;
     SeekBar seekBarVolume;
     AudioManager audioManager;
@@ -35,9 +43,9 @@ public class PlayActivity extends AppCompatActivity {
             "oven", "chopsticks", "passport", "luggage", "bride", "groom", "teddy",
             "motorcycle", "boat", "plane", "sheep", "crocodile", "eggs", "yogurt", "banana",
             "coconut", "grape", "mango", "honey", "pepper", "chocolate", "continent", "skyscraper",
-            "tongue", "massage", "pool", "thief", "wheel","escalator","stair","fortune_teller",
-            "zodiac","vampire","ghost", "nail_clipper","razor","toothpaste", "great_wall",
-            "eiffel_tower","pyramid","shampoo","skydive","temple"};
+            "tongue", "massage", "pool", "thief", "wheel", "escalator", "stair", "fortune_teller",
+            "zodiac", "vampire", "ghost", "nail_clipper", "razor", "toothpaste", "great_wall",
+            "eiffel_tower", "pyramid", "shampoo", "skydive", "temple"};
     List<String> listData = new ArrayList<>();
     int ident_1, ident_2, ident_3, ident_a = 0;
     String answer, audio;
@@ -51,6 +59,7 @@ public class PlayActivity extends AppCompatActivity {
     boolean right = true; // Trigger count right answer "only recognize in the first time"
     Random r = new Random();
     Animation animClick, animRotate, animZoomText, animZoomLoad;
+    static boolean saveGame = false;    // status load saved game or not
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +71,18 @@ public class PlayActivity extends AppCompatActivity {
         ivAnswer2 = (ImageView) findViewById(R.id.imageViewAnswer2);
         ivAnswer3 = (ImageView) findViewById(R.id.imageViewAnswer3);
         ivStop = (ImageView) findViewById(R.id.imageViewStop);
+        ivPause = (ImageView) findViewById(R.id.imageViewPause);
         ivVolume = (ImageView) findViewById(R.id.imageViewVolumeControl);
-        seekBarVolume = (SeekBar)findViewById(R.id.seekBarVolumeControl);
-        tvCount = (TextView)findViewById(R.id.textViewCount);
-        tvScore = (TextView)findViewById(R.id.textViewScore);
-        tvCountRight = (TextView)findViewById(R.id.textViewCountRight);
-        tvAnswer1 = (TextView)findViewById(R.id.textViewAnswer1);
-        tvAnswer2 = (TextView)findViewById(R.id.textViewAnswer2);
-        tvAnswer3 = (TextView)findViewById(R.id.textViewAnswer3);
+        seekBarVolume = (SeekBar) findViewById(R.id.seekBarVolumeControl);
+        tvCount = (TextView) findViewById(R.id.textViewCount);
+        tvScore = (TextView) findViewById(R.id.textViewScore);
+        tvCountRight = (TextView) findViewById(R.id.textViewCountRight);
+        tvAnswer1 = (TextView) findViewById(R.id.textViewAnswer1);
+        tvAnswer2 = (TextView) findViewById(R.id.textViewAnswer2);
+        tvAnswer3 = (TextView) findViewById(R.id.textViewAnswer3);
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         animClick = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.click);
         animRotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
@@ -86,23 +96,25 @@ public class PlayActivity extends AppCompatActivity {
         stopGame();
         controlVolume();
         toggleVolumeControl();
+        saveGame();
+        loadGame();
     }
 
 
-    public void play(){
+    public void play() {
         ivPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ivPlay.startAnimation(animClick);
-                if(run<=listData.size()-1){
+                if (run <= listData.size() - 1) {
                     ident_a = getResources().getIdentifier(listData.get(run), "raw", getPackageName());
                     mp = MediaPlayer.create(getApplicationContext(), ident_a);
-                    if(countPlay==0){
+                    if (countPlay == 0) {
                         clearText();
                         mp.start();
                         showImages();
                         right = true;
-                    }else{
+                    } else {
                         mp.start();
                     }
                     mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -112,17 +124,17 @@ public class PlayActivity extends AppCompatActivity {
                         }
                     });
 
-                    countClickRightAnswer=0;
+                    countClickRightAnswer = 0;
                     countPlay++;
                     tvCount.setText(Integer.toString(count + 1) + "/" + listData.size());
-                }else{
+                } else {
                     alertCompleteGame();
                 }
             }
         });
     }
 
-    public void showImages(){
+    public void showImages() {
         // Generate auto position for right answer
         int r_pos = r.nextInt(3);
 
@@ -180,42 +192,42 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    public void clearText(){
+    public void clearText() {
         tvAnswer1.setText(null);
         tvAnswer2.setText(null);
         tvAnswer3.setText(null);
     }
 
-    public void checkAnswer(View view){
-        switch (view.getId()){
+    public void checkAnswer(View view) {
+        switch (view.getId()) {
             case R.id.imageViewAnswer1:
-                if(ident_a==0){
-                    showToast();
+                if (ident_a == 0) {
+                    showToast("Please tap the headphone icon to hear the audio !");
                     break;
-                } else{
+                } else {
                     // Get entry name image_1 & audio
                     answer = getResources().getResourceEntryName(ident_1);
                     audio = getResources().getResourceEntryName(ident_a);
                     // Comparison
-                    if (answer.equalsIgnoreCase(audio)){
+                    if (answer.equalsIgnoreCase(audio)) {
                         ivAnswer1.startAnimation(animClick);
                         alertSound(1);
                         tvAnswer1.setText(answer);
                         tvAnswer1.startAnimation(animZoomText);
 
-                        countPlay=0;
-                        if(countClickRightAnswer==0){
+                        countPlay = 0;
+                        if (countClickRightAnswer == 0) {
                             run++;
                             count++;
                             tvScore.setText(Integer.toString(++score));
-                            if(right==true){
+                            if (right == true) {
                                 tvCountRight.setText(Integer.toString(++countRight));
                                 right = false;
                             }
                         }
                         play();
                         countClickRightAnswer++;
-                    }else{
+                    } else {
                         ivAnswer1.startAnimation(animRotate);
                         alertSound(0);
                         tvScore.setText(Integer.toString(--score));
@@ -224,34 +236,34 @@ public class PlayActivity extends AppCompatActivity {
                     break;
                 }
             case R.id.imageViewAnswer2:
-                if(ident_a==0){
-                    showToast();
+                if (ident_a == 0) {
+                    showToast("Please tap the headphone icon to hear the audio !");
                     break;
-                } else{
+                } else {
                     ivAnswer2.startAnimation(animClick);
                     // Get entry name image_2 & audio
                     answer = getResources().getResourceEntryName(ident_2);
                     audio = getResources().getResourceEntryName(ident_a);
                     // Comparison
-                    if (answer.equalsIgnoreCase(audio)){
+                    if (answer.equalsIgnoreCase(audio)) {
                         ivAnswer2.startAnimation(animClick);
                         alertSound(1);
                         tvAnswer2.setText(answer);
                         tvAnswer2.startAnimation(animZoomText);
 
-                        countPlay=0;
-                        if(countClickRightAnswer==0){
+                        countPlay = 0;
+                        if (countClickRightAnswer == 0) {
                             count++;
                             run++;
                             tvScore.setText(Integer.toString(++score));
-                            if(right==true){
+                            if (right == true) {
                                 tvCountRight.setText(Integer.toString(++countRight));
                                 right = false;
                             }
                         }
                         play();
                         countClickRightAnswer++;
-                    }else{
+                    } else {
                         ivAnswer2.startAnimation(animRotate);
                         alertSound(0);
                         tvScore.setText(Integer.toString(--score));
@@ -260,34 +272,34 @@ public class PlayActivity extends AppCompatActivity {
                     break;
                 }
             case R.id.imageViewAnswer3:
-                if(ident_a==0){
-                    showToast();
+                if (ident_a == 0) {
+                    showToast("Please tap the headphone icon to hear the audio !");
                     break;
-                } else{
+                } else {
                     ivAnswer3.startAnimation(animClick);
                     // Get entry name image_3 & audio
                     answer = getResources().getResourceEntryName(ident_3);
                     audio = getResources().getResourceEntryName(ident_a);
                     // Comparison
-                    if (answer.equalsIgnoreCase(audio)){
+                    if (answer.equalsIgnoreCase(audio)) {
                         ivAnswer3.startAnimation(animClick);
                         alertSound(1);
                         tvAnswer3.setText(answer);
                         tvAnswer3.startAnimation(animZoomText);
 
-                        countPlay=0;
-                        if(countClickRightAnswer==0){
+                        countPlay = 0;
+                        if (countClickRightAnswer == 0) {
                             count++;
                             run++;
                             tvScore.setText(Integer.toString(++score));
-                            if(right==true){
+                            if (right == true) {
                                 tvCountRight.setText(Integer.toString(++countRight));
                                 right = false;
                             }
                         }
                         play();
                         countClickRightAnswer++;
-                    }else{
+                    } else {
                         ivAnswer3.startAnimation(animRotate);
                         alertSound(0);
                         tvScore.setText(Integer.toString(--score));
@@ -298,17 +310,17 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    public void shuffleData(){
-        for(int i=0; i<arrData.length; i++){
+    public void shuffleData() {
+        for (int i = 0; i < arrData.length; i++) {
             listData.add(arrData[i]);
         }
         Collections.shuffle(listData);
     }
 
-    public void alertSound(int num){
+    public void alertSound(int num) {
         MediaPlayer mpAlert;
-        if(num == 0){
-            mpAlert = MediaPlayer.create(PlayActivity.this,R.raw.sys_wrong);
+        if (num == 0) {
+            mpAlert = MediaPlayer.create(PlayActivity.this, R.raw.sys_wrong);
             mpAlert.setVolume(0.5f, 0.5f);
             mpAlert.start();
             mpAlert.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -318,9 +330,9 @@ public class PlayActivity extends AppCompatActivity {
                 }
             });
         }
-        if(num == 1){
-            mpAlert = MediaPlayer.create(PlayActivity.this,R.raw.sys_right);
-            mpAlert.setVolume(0.5f,0.5f);
+        if (num == 1) {
+            mpAlert = MediaPlayer.create(PlayActivity.this, R.raw.sys_right);
+            mpAlert.setVolume(0.5f, 0.5f);
             mpAlert.start();
             mpAlert.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -329,9 +341,9 @@ public class PlayActivity extends AppCompatActivity {
                 }
             });
         }
-        if(num == 2){
-            mpAlert = MediaPlayer.create(PlayActivity.this,R.raw.sys_congratulation);
-            mpAlert.setVolume(0.5f,0.5f);
+        if (num == 2) {
+            mpAlert = MediaPlayer.create(PlayActivity.this, R.raw.sys_congratulation);
+            mpAlert.setVolume(0.5f, 0.5f);
             mpAlert.start();
             mpAlert.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -342,15 +354,15 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    public void alertCompleteGame(){
+    public void alertCompleteGame() {
         alertSound(2);
         Dialog dialog = new Dialog(this);
         dialog.setTitle("Complete Level");
         dialog.setContentView(R.layout.custom_dialog_complete_game);
-        TextView scoreRef = (TextView)dialog.findViewById(R.id.tv_cus_Score);
-        TextView countRightRef = (TextView)dialog.findViewById(R.id.tv_cus_CountRight);
-        Button btnGoMainRef = (Button)dialog.findViewById(R.id.btn_cus_Main);
-        Button btnReplayRef = (Button)dialog.findViewById(R.id.btn_cus_Replay);
+        TextView scoreRef = (TextView) dialog.findViewById(R.id.tv_cus_Score);
+        TextView countRightRef = (TextView) dialog.findViewById(R.id.tv_cus_CountRight);
+        Button btnGoMainRef = (Button) dialog.findViewById(R.id.btn_cus_Main);
+        Button btnReplayRef = (Button) dialog.findViewById(R.id.btn_cus_Replay);
 
         scoreRef.setText(Integer.toString(score));
         countRightRef.setText(Integer.toString(countRight));
@@ -369,26 +381,27 @@ public class PlayActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void showToast(){
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast,(ViewGroup)findViewById(R.id.layout_cus_toast));
+    public void showToast(String msg) {
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.layout_cus_toast));
         Toast toast = new Toast(this);
         toast.setView(layout);
         toast.setDuration(Toast.LENGTH_SHORT);
-        TextView msg = (TextView)layout.findViewById(R.id.tv_cus_toast);
-        msg.setText("Please tap the headphone icon to hear the audio !");
+        TextView txt = (TextView) layout.findViewById(R.id.tv_cus_toast);
+        txt.setText(msg);
         toast.show();
     }
 
-    public void stopGame(){
+    public void stopGame() {
         ivStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this);
-                builder.setTitle("Quit the lession");
-                builder.setMessage("Are you sure exit this lession !");
+                builder.setTitle("Exit the lesson");
+                builder.setMessage("Are you sure exit this lesson ?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        saveGame = false;
                         startActivity(new Intent(PlayActivity.this, MainActivity.class));
                     }
                 });
@@ -398,7 +411,7 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
 
-    public void controlVolume(){
+    public void controlVolume() {
         seekBarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         seekBarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
         seekBarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -419,18 +432,96 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
 
-    public void toggleVolumeControl(){
+    public void toggleVolumeControl() {
         ivVolume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(seekBarVolume.isShown()){
+                if (seekBarVolume.isShown()) {
                     seekBarVolume.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     seekBarVolume.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
+
+    public void saveGame() {
+        ivPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this);
+                builder.setTitle("Save the lesson");
+                builder.setMessage("Are you sure save this lesson?");
+                builder.setNegativeButton("No", null);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences sharePref = getSharedPreferences("save_game", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharePref.edit();
+                        JSONArray jsonArray = new JSONArray();
+                        for (int i = 0; i < listData.size(); i++) {
+                            jsonArray.put(listData.get(i));
+                        }
+                        editor.putString("list", jsonArray.toString());
+                        editor.putInt("count", run);
+                        editor.putInt("score", score);
+                        editor.putInt("countRight", countRight);
+                        if (editor.commit()) {
+                            showToast("Game save successful !");
+                        } else {
+                            showToast("Game save failed !");
+                        }
+                    }
+                });
+                builder.show();
+            }
+        });
+    }
+
+    public void loadGame() {
+        if(saveGame){
+            SharedPreferences sharePref = getSharedPreferences("save_game",MODE_PRIVATE);
+            // retrieve list
+            String str = sharePref.getString("list",null);
+            if(str!=null){
+                try {
+                    JSONArray json = new JSONArray(str);
+                    List<String> listReturn = new ArrayList<>();
+                    for(int i=0; i<json.length();i++){
+                        listReturn.add(json.optString(i));
+                    }
+                    listData = listReturn;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            // retrieve count
+            int countReturn = sharePref.getInt("count",-1);
+            if(countReturn!=-1){
+                run = countReturn;
+                count = countReturn;
+            }
+            // retrieve score
+            int scoreReturn = sharePref.getInt("score",-1);{
+                if(scoreReturn!=-1){
+                    score = scoreReturn;
+                }
+            }
+            // retrieve countRight
+            int countRightReturn = sharePref.getInt("countRight",-1);
+            if(countRightReturn!=-1){
+                countRight = countRightReturn;
+            }
+            // set status count / score / countRight
+            tvCount.setText(Integer.toString(count+1)+"/"+listData.size());
+            tvScore.setText(Integer.toString(score));
+            tvCountRight.setText(Integer.toString(countRight));
+        }
+    }
+
+
+
+
 
 
 
