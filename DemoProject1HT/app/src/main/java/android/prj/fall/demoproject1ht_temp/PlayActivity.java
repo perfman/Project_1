@@ -1,4 +1,4 @@
-package android.prj.fall.demoproject1ht;
+package android.prj.fall.demoproject1ht_temp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,10 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,10 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class PlayActivity extends AppCompatActivity {
     ImageView ivPlay, ivAnswer1, ivAnswer2, ivAnswer3, ivStop, ivPause, ivVolume;

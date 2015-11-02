@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/sys_bg_main"
-    tools:context="android.prj.fall.demoproject1ht.MainActivity">
+    tools:context="android.prj.fall.demoproject1ht_temp.MainActivity">
     <LinearLayout
         android:layout_width="185dp"
         android:layout_height="380dp"

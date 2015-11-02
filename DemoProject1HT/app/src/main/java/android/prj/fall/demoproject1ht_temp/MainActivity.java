@@ -1,4 +1,4 @@
-package android.prj.fall.demoproject1ht;
+package android.prj.fall.demoproject1ht_temp;
 
 import android.app.Dialog;
 import android.content.Intent;
