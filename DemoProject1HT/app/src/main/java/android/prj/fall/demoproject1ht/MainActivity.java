@@ -11,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     Button btnPlay, btnLoad;
@@ -58,31 +59,34 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 btnLoad.startAnimation(animClick);
                 playSoundClick();
+                if(getInfoSaveGame("checkShare").equals("no")){
+                    PlayActivity.showToast(MainActivity.this,"You're not save any game yet !");
+                }else{
+                    final Dialog dialog = new Dialog(MainActivity.this);
+                    dialog.setTitle("Load Game");
+                    dialog.setContentView(R.layout.custom_dialog_load_game);
+                    TextView time = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Time);
+                    TextView position = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Position);
+                    time.setText(getInfoSaveGame("time"));
+                    position.setText(getInfoSaveGame("position"));
 
-                final Dialog dialog = new Dialog(MainActivity.this);
-                dialog.setTitle("Load Game");
-                dialog.setContentView(R.layout.custom_dialog_load_game);
-                TextView time = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Time);
-                TextView position = (TextView) dialog.findViewById(R.id.tv_cus_InfoSavedGame_Position);
-                time.setText(getInfoSaveGame("time"));
-                position.setText(getInfoSaveGame("position"));
-
-                Button btnCancel = (Button) dialog.findViewById(R.id.btn_cus_CancelLoadGame);
-                Button btnOK = (Button) dialog.findViewById(R.id.btn_cus_OKLoadGame);
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                btnOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PlayActivity.saveGame = true;
-                        startActivity(new Intent(MainActivity.this, PlayActivity.class));
-                    }
-                });
-                dialog.show();
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cus_CancelLoadGame);
+                    Button btnOK = (Button) dialog.findViewById(R.id.btn_cus_OKLoadGame);
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    btnOK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            PlayActivity.saveGame = true;
+                            startActivity(new Intent(MainActivity.this, PlayActivity.class));
+                        }
+                    });
+                    dialog.show();
+                }
             }
         });
     }
@@ -97,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
             int size = share.getInt("size", 0);
             return Integer.toString(count + 1) + "/" + Integer.toString(size);
 
+        } else if(type.equals("checkShare")){
+            if(!share.contains("list")){
+                return "no";
+            }
         }
         return "";
     }

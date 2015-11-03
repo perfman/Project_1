@@ -48,8 +48,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_cus_Main"
-            android:text="Main"/>
+            android:id="@+id/btn_cus_Home"
+            android:text="Home"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

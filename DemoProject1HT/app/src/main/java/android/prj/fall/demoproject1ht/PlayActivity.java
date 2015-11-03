@@ -1,5 +1,6 @@
 package android.prj.fall.demoproject1ht;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -200,7 +201,7 @@ public class PlayActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.imageViewAnswer1:
                 if (ident_a == 0) {
-                    showToast("Please tap the headphone icon to hear the audio !");
+                    showToast(this, "Please tap the headphone icon to hear the audio !");
                     break;
                 } else {
                     // Get entry name image_1 & audio
@@ -235,7 +236,7 @@ public class PlayActivity extends AppCompatActivity {
                 }
             case R.id.imageViewAnswer2:
                 if (ident_a == 0) {
-                    showToast("Please tap the headphone icon to hear the audio !");
+                    showToast(this,"Please tap the headphone icon to hear the audio !");
                     break;
                 } else {
                     ivAnswer2.startAnimation(animClick);
@@ -271,7 +272,7 @@ public class PlayActivity extends AppCompatActivity {
                 }
             case R.id.imageViewAnswer3:
                 if (ident_a == 0) {
-                    showToast("Please tap the headphone icon to hear the audio !");
+                    showToast(this,"Please tap the headphone icon to hear the audio !");
                     break;
                 } else {
                     ivAnswer3.startAnimation(animClick);
@@ -319,7 +320,7 @@ public class PlayActivity extends AppCompatActivity {
         MediaPlayer mpAlert;
         if (num == 0) {
             mpAlert = MediaPlayer.create(PlayActivity.this, R.raw.sys_wrong);
-            mpAlert.setVolume(0.5f, 0.5f);
+            mpAlert.setVolume(0.3f, 0.3f);
             mpAlert.start();
             mpAlert.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -330,7 +331,7 @@ public class PlayActivity extends AppCompatActivity {
         }
         if (num == 1) {
             mpAlert = MediaPlayer.create(PlayActivity.this, R.raw.sys_right);
-            mpAlert.setVolume(0.5f, 0.5f);
+            mpAlert.setVolume(0.3f, 0.3f);
             mpAlert.start();
             mpAlert.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -357,14 +358,15 @@ public class PlayActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setTitle("Complete Level");
         dialog.setContentView(R.layout.custom_dialog_complete_game);
+        dialog.setCanceledOnTouchOutside(false); // not permit to touch outside
         TextView scoreRef = (TextView) dialog.findViewById(R.id.tv_cus_Score);
         TextView countRightRef = (TextView) dialog.findViewById(R.id.tv_cus_CountRight);
-        Button btnGoMainRef = (Button) dialog.findViewById(R.id.btn_cus_Main);
+        Button btnGoHomeRef = (Button) dialog.findViewById(R.id.btn_cus_Home);
         Button btnReplayRef = (Button) dialog.findViewById(R.id.btn_cus_Replay);
 
         scoreRef.setText(Integer.toString(score));
         countRightRef.setText(Integer.toString(countRight));
-        btnGoMainRef.setOnClickListener(new View.OnClickListener() {
+        btnGoHomeRef.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(PlayActivity.this, MainActivity.class));
@@ -379,9 +381,9 @@ public class PlayActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void showToast(String msg) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.layout_cus_toast));
-        Toast toast = new Toast(this);
+    public static void showToast(Activity context, String msg) {
+        View layout = context.getLayoutInflater().inflate(R.layout.custom_toast, (ViewGroup)context.findViewById(R.id.layout_cus_toast));
+        Toast toast = new Toast(context);
         toast.setView(layout);
         toast.setDuration(Toast.LENGTH_SHORT);
         TextView txt = (TextView) layout.findViewById(R.id.tv_cus_toast);
@@ -470,9 +472,9 @@ public class PlayActivity extends AppCompatActivity {
                         String currentTime = format.format(new Date());
                         editor.putString("time",currentTime);
                         if (editor.commit()) {
-                            showToast("Game save successful !");
+                            showToast(PlayActivity.this,"Game save successful !");
                         } else {
-                            showToast("Game save failed !");
+                            showToast(PlayActivity.this,"Game save failed !");
                         }
                     }
                 });
