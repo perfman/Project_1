@@ -51,6 +51,7 @@
         <Button
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:id="@+id/buttonHelp"
             android:text="help"
             android:textColor="#FFFFFF"
             android:background="@drawable/sys_border"

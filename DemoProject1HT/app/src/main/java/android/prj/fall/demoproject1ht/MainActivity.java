@@ -1,5 +1,6 @@
 package android.prj.fall.demoproject1ht;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnPlay, btnLoad;
+    Button btnPlay, btnLoad, btnHelp;
     Animation animClick;
     MediaPlayer mpClick;
 
@@ -24,11 +25,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnPlay = (Button) findViewById(R.id.buttonPlay);
         btnLoad = (Button) findViewById(R.id.buttonLoad);
+        btnHelp = (Button) findViewById(R.id.buttonHelp);
 
         animClick = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.click);
 
         playGame();
         loadGame();
+        showHelp();
     }
 
     public void playGame() {
@@ -107,5 +110,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return "";
+    }
+
+    public void showHelp(){
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playSoundClick();
+                startActivity(new Intent(MainActivity.this,HelpActivity.class));
+            }
+        });
     }
 }
